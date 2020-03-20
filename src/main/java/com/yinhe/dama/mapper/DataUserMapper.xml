@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yinhe.dama.mapper.DataUserMapper">
+    <resultMap id="BaseResultMap" type="com.yinhe.dama.entity.DataUser" >
+        <id column="uid" property="uid" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="company" property="company" jdbcType="VARCHAR" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <result column="creattime" property="creattime" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+    uid, name, phone, company,remark,creattime
+    </sql>
+
+
+    <!--用户多条件分页查询-->
+    <select id="selectDaus" parameterType="DataUser" resultMap="BaseResultMap" flushCache="true" useCache="false">
+        select <include refid="Base_Column_List" /> from data_user where 1=1
+        <if test="name != null" >
+            and name LIKE  CONCAT(CONCAT('%', #{name,jdbcType=VARCHAR} ), '%')
+        </if>
+        <if test="company != null" >
+            and company LIKE  CONCAT(CONCAT('%', #{company,jdbcType=VARCHAR} ),'%')
+        </if>
+        limit #{page,jdbcType=BIGINT} , #{pageSize,jdbcType=BIGINT}
+    </select>
+
+    <!--用户条件查询总数 -->
+    <select id="selectCont" parameterType="DataUser" resultType="Integer" flushCache="true" useCache="false">
+        select count(*) FROM data_user  where 1=1
+        <if test="name != null" >
+            and name LIKE  CONCAT(CONCAT('%', #{name,jdbcType=VARCHAR} ), '%')
+        </if>
+        <if test="company != null" >
+            and company LIKE  CONCAT(CONCAT('%', #{company,jdbcType=VARCHAR} ),'%')
+        </if>
+    </select>
+
+    <!-- 用户添加 -->
+    <insert id="addDaus" parameterType="DataUser">
+        INSERT INTO data_user (name,phone,company,remark,creattime)values
+       (#{name,jdbcType=VARCHAR} , #{phone,jdbcType=VARCHAR} , #{company,jdbcType=VARCHAR} ,
+       #{remark,jdbcType=VARCHAR} , #{creattime,jdbcType=VARCHAR})
+    </insert>
+
+    <!-- 根据id删除-->
+    <delete id="deleteDaus" parameterType="int[]">
+        <!-- forEach : 用来循环 collection : 用来指定循环的数据的类型 可以填的值有：array,list,map item
+            : 循环中为每个循环的数据指定一个别名 index : 循环中循环的下标 open : 开始 close : 结束 separator : 数组中元素之间的分隔符 -->
+        delete from data_user where uid in
+        <foreach collection="array" item="arr" index="no" open="("
+                 separator="," close=")">
+            #{arr}
+        </foreach>
+    </delete>
+
+
+    <!--根据id查询用户信息-->
+    <select id="selectUsid"  resultType="DataUser" flushCache="true" useCache="false">
+        select <include refid="Base_Column_List" /> FROM data_user  where uid = #{uid}
+    </select>
+
+    <!--根据id修改信息  -->
+    <update id="updateDaus" parameterType="DataUser">
+        update data_user
+        <set>
+            <if test="name != null and name != '' ">
+                name = #{name},
+            </if>
+            <if test="phone != null and phone != '' ">
+                phone = #{phone},
+            </if>
+            <if test="company != null and company != '' ">
+                company = #{company},
+            </if>
+            <if test="remark != null and remark != '' ">
+                remark = #{remark}
+            </if>
+        </set>
+        where uid = #{uid}
+    </update>
+
+    <!--导出 -->
+    <select id="expDaus" parameterType="DataUser" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from data_user  where 1=1
+        <if test="name != null" >
+            and name LIKE  CONCAT(CONCAT('%', #{name,jdbcType=VARCHAR} ), '%')
+        </if>
+        <if test="recaccount != null" >
+            and company LIKE  CONCAT(CONCAT('%', #{company,jdbcType=VARCHAR} ),'%')
+        </if>
+    </select>
+</mapper>

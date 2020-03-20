@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yinhe.dama.mapper.DataModuleMapper">
+    <resultMap id="BaseResultMap" type="com.yinhe.dama.entity.DataModule" >
+        <id column="modid" property="modid" jdbcType="BIGINT" />
+        <result column="module_number" property="module_number" jdbcType="VARCHAR" />
+        <result column="module_sim" property="module_sim" jdbcType="VARCHAR" />
+        <result column="platform_id" property="platform_id" jdbcType="VARCHAR" />
+        <result column="register_time" property="register_time" jdbcType="VARCHAR" />
+        <result column="last_time" property="last_time" jdbcType="VARCHAR" />
+        <result column="test_state" property="test_state" jdbcType="INTEGER" />
+        <result column="module_customer" property="module_customer" jdbcType="VARCHAR" />
+        <result column="username" property="username" jdbcType="VARCHAR" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+    modid, module_number, module_sim, platform_id, register_time,last_time,test_state,module_customer,username,remark
+    </sql>
+
+
+
+</mapper>

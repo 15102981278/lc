@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yinhe.dama.mapper.DataRecordMapper">
+    <resultMap id="BaseResultMap" type="com.yinhe.dama.entity.DataRecord" >
+        <id column="recid" property="recid" jdbcType="BIGINT" />
+        <result column="recname" property="recname" jdbcType="VARCHAR" />
+        <result column="recaccount" property="recaccount" jdbcType="VARCHAR" />
+        <result column="recmodule" property="recmodule" jdbcType="VARCHAR" />
+        <result column="recoperation" property="recoperation" jdbcType="VARCHAR" />
+        <result column="recip" property="recip" jdbcType="VARCHAR" />
+        <result column="rectime" property="rectime" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+    recid, recname, recaccount, recmodule,recoperation,recip,rectime
+    </sql>
+
+    <insert id="addRecord" parameterType="DataRecord">
+       insert into data_record (recname,recaccount,recmodule,recoperation,recip,rectime) values (
+       #{recname,jdbcType=VARCHAR}, #{recaccount,jdbcType=VARCHAR}, #{recmodule,jdbcType=VARCHAR}
+       ,#{recoperation,jdbcType=VARCHAR}, #{recip,jdbcType=VARCHAR}, #{rectime,jdbcType=VARCHAR}
+       )
+    </insert>
+
+    <select id="selectDare" parameterType="DataRecord" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from data_record  where 1=1
+        <if test="recname != null" >
+            and recname LIKE  CONCAT(CONCAT('%', #{recname,jdbcType=VARCHAR} ), '%')
+        </if>
+        <if test="recaccount != null" >
+            and recaccount LIKE  CONCAT(CONCAT('%', #{recaccount,jdbcType=VARCHAR} ),'%')
+        </if>
+        ORDER BY rectime desc
+        limit #{page,jdbcType=BIGINT} , #{pageSize,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectCont" parameterType="DataRecord" resultType="Integer">
+        select count(*) FROM data_record  where 1=1
+        <if test="recname != null" >
+            and recname LIKE  CONCAT(CONCAT('%', #{recname,jdbcType=VARCHAR} ), '%')
+        </if>
+        <if test="recaccount != null" >
+            and recaccount LIKE  CONCAT(CONCAT('%', #{recaccount,jdbcType=VARCHAR} ),'%')
+        </if>
+    </select>
+
+    <!--导出 -->
+    <select id="exportrec" parameterType="DataRecord" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from data_record  where 1=1
+        <if test="recname != null" >
+            and recname LIKE  CONCAT(CONCAT('%', #{recname,jdbcType=VARCHAR} ), '%')
+        </if>
+        <if test="recaccount != null" >
+            and recaccount LIKE  CONCAT(CONCAT('%', #{recaccount,jdbcType=VARCHAR} ),'%')
+        </if>
+        ORDER BY rectime desc
+    </select>
+</mapper>
