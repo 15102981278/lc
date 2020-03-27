@@ -1,10 +1,10 @@
 package com.yinhe.dama.web.controller;
 
 import com.yinhe.dama.aop.Encapsulation;
-import com.yinhe.dama.entity.DataAccount;
+import com.yinhe.dama.entity.DataCompany;
 import com.yinhe.dama.entity.DataUser;
 import com.yinhe.dama.entity.KeyWord;
-import com.yinhe.dama.service.DataAccountService;
+import com.yinhe.dama.service.DataCompanyService;
 import com.yinhe.dama.service.DataUserService;
 import net.sf.json.JSONObject;
 import org.springframework.stereotype.Controller;
@@ -18,42 +18,40 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
- * @ClassName DataUserController
- * @Description 用户controller
+ * @ClassName DataCompanyController
+ * @Description 公司controller
  * @Author lc
- * @Date 2020/3/12 0012 14:17
+ * @Date 2020-3-26 13:56:47
  * @Version 1.0
  */
 @Controller
-@RequestMapping("/DataUser")
-public class  DataUserController {
+@RequestMapping("/DataCompany")
+public class DataCompanyController {
 
     @Resource
-    DataUserService dataUserService;
+    DataCompanyService dataCompanyService;
     @Resource
-    DataAccountService dataAccountService;
+    DataUserService dataUserService;
+
     static final KeyWord keyword = new KeyWord();
     /**
      * 多条件分页查询
      * @param
      * @return
      */
-    @RequestMapping("/selectDaus")
-    public void selectDaus(@RequestParam(value = "limit",required = false)int limit,
+    @RequestMapping("/selectDaco")
+    public void selectDaco(@RequestParam(value = "limit",required = false)int limit,
                            @RequestParam(value = "page",required = false)int page,
-                           DataUser dataUser, HttpServletResponse response, HttpServletRequest request) throws Exception{
-        if(Encapsulation.getIs(keyword.getUser_sel(),request)){
-            dataUser.setPageSize(limit);
-            dataUser.setPage((page-1) * limit);
+                           DataCompany dataCompany, HttpServletResponse response, HttpServletRequest request) throws Exception{
+        if(Encapsulation.getIs(keyword.getComp_sel(),request)){
+            dataCompany.setPageSize(limit);
+            dataCompany.setPage((page-1) * limit);
 
-            if(StringUtils.isEmpty(dataUser.getName())){
-                dataUser.setName(null);
+            if(StringUtils.isEmpty(dataCompany.getConame())){
+                dataCompany.setConame(null);
             }
-            if(StringUtils.isEmpty(dataUser.getCompany())){
-                dataUser.setCompany(null);
-            }
-            List<DataUser> cslist = dataUserService.selectDaus(dataUser);
-            int a = dataUserService.selectCont(dataUser);
+            List<DataCompany> cslist = dataCompanyService.selectDaco(dataCompany);
+            int a = dataCompanyService.selectCont(dataCompany);
             JSONObject jsonObject = Encapsulation.getJsonObject(cslist,a);
             Encapsulation.write(response, jsonObject);
         }else{
@@ -68,19 +66,17 @@ public class  DataUserController {
      * @param
      * @return
      */
-    @RequestMapping("/addDaus")
-    public synchronized void addDaus(DataUser dataUser,HttpServletResponse response,HttpServletRequest request) throws Exception {
+    @RequestMapping("/addDaco")
+    public synchronized void addDaco(DataCompany dataCompany,HttpServletResponse response,HttpServletRequest request) throws Exception {
 
-        if(Encapsulation.getIs(keyword.getUser_add(),request)){
-            String time  = Encapsulation.getTime();
-            dataUser.setCreattime(time);
-            DataUser daone = new DataUser();
-            daone.setPhone(dataUser.getPhone());
-            if(dataUserService.selectQc(daone) > 0){
+        if(Encapsulation.getIs(keyword.getComp_add(),request)){
+            DataCompany dc = new DataCompany();
+            dc.setConame(dataCompany.getConame());
+            if(dataCompanyService.selectcoQc(dc) > 0){
                 JSONObject jsonObject = Encapsulation.getJsonObj(2);
                 Encapsulation.write(response, jsonObject);
             }else{
-                int Is  = dataUserService.addDaus(dataUser,request);
+                int Is  = dataCompanyService.addDaco(dataCompany,request);
                 if(Is > 0){
                     //成功
                     JSONObject jsonObject = Encapsulation.getJsonObj(1);
@@ -105,16 +101,16 @@ public class  DataUserController {
      * @param ids 主键集合
      * @throws
      */
-    @RequestMapping("/deletecount")
-    public void deletecount(HttpServletResponse response, String ids,HttpServletRequest request) throws Exception{
+    @RequestMapping("/deleteDaco")
+    public void deleteDaco(HttpServletResponse response, String ids,HttpServletRequest request) throws Exception{
 
-        if(Encapsulation.getIs(keyword.getUser_del(),request)){
-            List<DataAccount> daac= dataAccountService.selectUid(ids);
+        if(Encapsulation.getIs(keyword.getComp_del(),request)){
+            List<DataUser> daac= dataUserService.selectCoid(ids);
             if(daac.size() > 0){
                 JSONObject jsonObject = Encapsulation.getJsonObject(daac,0);
                 Encapsulation.write(response, jsonObject);
             }else{
-                int Is  = dataUserService.deleteDaus(ids,request);
+                int Is  = dataCompanyService.deleteDaco(ids,request);
                 if(Is > 0){
                     //成功
                     JSONObject jsonObject = Encapsulation.getJsonObj(1);
@@ -134,23 +130,23 @@ public class  DataUserController {
 
     /**
      * 修改
-     * @param dataUser
+     * @param dataCompany
      * @param response
      * @throws Exception
      */
-    @RequestMapping("updateDaus")
-    public synchronized void updateDaus(DataUser dataUser,HttpServletResponse response,HttpServletRequest request) throws Exception {
+    @RequestMapping("updateDaco")
+    public synchronized void updateDaco(DataCompany dataCompany,HttpServletResponse response,HttpServletRequest request) throws Exception {
 
-        if(Encapsulation.getIs(keyword.getUser_upd(),request)){
+        if(Encapsulation.getIs(keyword.getComp_upd(),request)){
 
-            DataUser daone = new DataUser();
-            daone.setUid(dataUser.getUid());
-            daone.setPhone(dataUser.getPhone());
-            if(dataUserService.selectQc(daone) > 0){
+            DataCompany daone = new DataCompany();
+            daone.setConame(dataCompany.getConame());
+            daone.setCoid(dataCompany.getCoid());
+            if(dataCompanyService.selectcoQc(daone) > 0){
                 JSONObject jsonObject = Encapsulation.getJsonObj(2);
                 Encapsulation.write(response, jsonObject);
             }else{
-                int Is =  dataUserService.updateDaus(dataUser,request);
+                int Is =  dataCompanyService.updateDaco(dataCompany,request);
                 if(Is > 0){
                     //成功
                     JSONObject jsonObject = Encapsulation.getJsonObj(1);

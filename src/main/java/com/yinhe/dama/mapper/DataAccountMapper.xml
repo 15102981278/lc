@@ -33,7 +33,7 @@
     </select>
 
     <!--多条件分页查询-->
-    <select id="selectDaac" parameterType="DataAccount" resultMap="BaseResultMap" flushCache="true" useCache="false">
+    <select id="selectDaac" parameterType="DataAccount" resultMap="BaseResultMap">
         select * from data_account a left join data_user b on a.u_id = b.uid where 1=1
         <if test="account != null" >
             and a.account LIKE  CONCAT(CONCAT('%', #{account,jdbcType=VARCHAR} ), '%')
@@ -42,13 +42,13 @@
             and a.authority LIKE  CONCAT(CONCAT('%', #{authority,jdbcType=VARCHAR} ),'%')
         </if>
         <if test="u_name != null" >
-            and b.u_name LIKE  CONCAT(CONCAT('%', #{u_name,jdbcType=VARCHAR} ),'%')
+            and b.name LIKE  CONCAT(CONCAT('%', #{u_name,jdbcType=VARCHAR} ),'%')
         </if>
         limit #{page,jdbcType=BIGINT} , #{pageSize,jdbcType=BIGINT}
     </select>
 
     <!--查询总数 -->
-    <select id="selectCont" parameterType="DataAccount" resultType="Integer" flushCache="true" useCache="false">
+    <select id="selectCont" parameterType="DataAccount" resultType="Integer">
         select count(*) from data_account a left join data_user b on a.u_id = b.uid where 1=1
         <if test="account != null" >
             and a.account LIKE  CONCAT(CONCAT('%', #{account,jdbcType=VARCHAR} ), '%')
@@ -57,7 +57,7 @@
             and a.authority LIKE  CONCAT(CONCAT('%', #{authority,jdbcType=VARCHAR} ),'%')
         </if>
         <if test="u_name != null" >
-            and b.u_name LIKE  CONCAT(CONCAT('%', #{u_name,jdbcType=VARCHAR} ),'%')
+            and b.name LIKE  CONCAT(CONCAT('%', #{u_name,jdbcType=VARCHAR} ),'%')
         </if>
     </select>
 
@@ -71,12 +71,99 @@
         update data_account set logon_time = #{logon_time},ip = #{ip} where account = #{account}
     </update>
 
-    <!--修改账号用户外键  -->
+ <!--   &lt;!&ndash;修改账号用户外键  &ndash;&gt;
     <update id="updateUid" parameterType="int[]">
         update data_account set u_id = NULL where u_id in
         <foreach collection="array" item="arr" index="no" open="("
                  separator="," close=")">
             #{arr}
         </foreach>
+    </update>-->
+    <!--查询有没有用户信息外键 -->
+    <select id="selectUid"  parameterType="int[]" resultMap="BaseResultMap">
+       select * from data_account b left join data_user a on a.uid = b.u_id where b.u_id in
+        <foreach collection="array" item="arr" index="no" open="("
+                 separator="," close=")">
+            #{arr}
+        </foreach>
+    </select>
+    <!-- 查询用户拥有账号数 -->
+    <select id="selectAcuid"  resultType="Integer" parameterType="DataAccount">
+        select count(*) FROM data_account  where 1=1
+        <if test="u_id != null" >
+            and u_id = #{u_id,jdbcType=BIGINT}
+        </if>
+        <if test="account != null" >
+            and account = #{account,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <!-- 去重 -->
+    <select id="selectacQc" parameterType="DataAccount" resultType="Integer" flushCache="true" useCache="false">
+        select count(*) FROM data_account  where account = #{account,jdbcType=VARCHAR}
+        <if test="accid != null" >
+            and accid !=  #{accid,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <!-- 账号添加 -->
+    <insert id="addAcco" parameterType="DataAccount">
+        INSERT INTO data_account (u_id,account,password,establish_time,authority,remark)values
+       (#{u_id,jdbcType=BIGINT} , #{account,jdbcType=VARCHAR} , #{password,jdbcType=VARCHAR} ,
+       #{establish_time,jdbcType=VARCHAR} , #{authority,jdbcType=INTEGER} , #{remark,jdbcType=VARCHAR})
+    </insert>
+
+    <!-- 账号删除-->
+    <delete id="deleteAcco" parameterType="int[]">
+        <!-- forEach : 用来循环 collection : 用来指定循环的数据的类型 可以填的值有：array,list,map item
+            : 循环中为每个循环的数据指定一个别名 index : 循环中循环的下标 open : 开始 close : 结束 separator : 数组中元素之间的分隔符 -->
+        delete from data_account where accid in
+        <foreach collection="array" item="arr" index="no" open="("
+                 separator="," close=")">
+            #{arr}
+        </foreach>
+    </delete>
+
+    <!--根据id修改信息  -->
+    <update id="updateAccou" parameterType="DataAccount">
+        update data_account
+        <set>
+            <if test="account != null and account != '' ">
+                account = #{account},
+            </if>
+            <if test="authority != null and authority != '' ">
+                authority = #{authority},
+            </if>
+            <if test="u_id != null and u_id != '' ">
+                u_id = #{u_id},
+            </if>
+            <if test="remark != null and remark != '' ">
+                remark = #{remark},
+            </if>
+        </set>
+        where accid = #{accid}
+    </update>
+
+    <!--重置密码-->
+    <update id="updatePas" parameterType="DataAccount">
+        update data_account set password = #{password} where accid = #{accid}
+    </update>
+
+    <!--导出 -->
+    <select id="exportaco" parameterType="DataAccount" resultMap="BaseResultMap">
+        select * from data_account b left join data_user a on a.uid = b.u_id  where 1=1
+        <if test="u_name != null" >
+            and a.name LIKE  CONCAT(CONCAT('%', #{u_name,jdbcType=VARCHAR} ), '%')
+        </if>
+        <if test="account != null" >
+            and b.account LIKE  CONCAT(CONCAT('%', #{account,jdbcType=VARCHAR} ),'%')
+        </if>
+    </select>
+
+    <!--编辑权限-->
+    <update id="editAuth" parameterType="DataAccount">
+        update data_account set
+        moduleo_authority = #{moduleo_authority},modulet_authority = #{modulet_authority},operate_authority = #{operate_authority}
+        where accid = #{accid}
     </update>
 </mapper>

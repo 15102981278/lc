@@ -115,7 +115,7 @@ public class DataRecordServiceImpl implements DataRecordService {
         }
         Encapsulation.dowEx("日志记录",response,wb);
 
-            dataRecord= Encapsulation.getRec(request,remona,"数据导出");
+            dataRecord= Encapsulation.getRec(request,remona,"日志导出");
             dataRecordMapper.addRecord(dataRecord);
     }
 

@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -109,14 +110,26 @@ public class Encapsulation {
         return timer;
     }
 
+    public static int[] getIntArr(String ids) {
+        String[] strArray = ids.split(",");
+        int[] ints = new int[strArray.length];
+        for (int i = 0; i < strArray.length; i++) {
+            ints[i] = Integer.parseInt(strArray[i]);
+        }
+        return ints;
+    }
+
+
     public static boolean  getIs(String sta,HttpServletRequest request) {
         Boolean is = false;
         DataAccount user= (DataAccount) request.getSession().getAttribute("acco");
-        String operate = user.getOperate_authority();
-        String[] ope = operate.split(",");
-        for(int i=0; i<ope.length; i++){
-            if(sta.equals(ope[i])){
-                is = true;
+        if(user.getOperate_authority() != null){
+            String operate = user.getOperate_authority();
+            String[] ope = operate.split(",");
+            for(int i=0; i<ope.length; i++){
+                if(sta.equals(ope[i])){
+                    is = true;
+                }
             }
         }
         return is;
@@ -190,5 +203,31 @@ public class Encapsulation {
         }
         System.err.println("now:   "+now);
         return now;
+    }
+
+    /**加密*/
+    public static String md5Encode(String inStr) {
+
+        MessageDigest md5;
+        StringBuffer hexValue = new StringBuffer();
+
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+
+            byte[] byteArray = inStr.getBytes("UTF-8");
+            byte[] md5Bytes = md5.digest(byteArray);
+
+            for (int i = 0; i < md5Bytes.length; i++) {
+                int val = ((int) md5Bytes[i]) & 0xff;
+                if (val < 16) {
+                    hexValue.append("0");
+                }
+                hexValue.append(Integer.toHexString(val));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+        return hexValue.toString();
     }
 }

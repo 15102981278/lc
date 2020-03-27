@@ -62,7 +62,6 @@
 	      ,even: true
 	      ,cols: [[
              {field:'recid',title:'序号',width:170, sort: true, fixed: true,type:'numbers'}
-            ,{type:'checkbox'}
 	        ,{field:'recname', title: '操作人',  align: 'center'}
             ,{field:'recaccount', title: '操作账号',  align: 'center'}
             ,{field:'recmodule', title: '操作模块',  align: 'center'}

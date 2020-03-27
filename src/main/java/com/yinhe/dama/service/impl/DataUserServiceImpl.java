@@ -1,13 +1,10 @@
 package com.yinhe.dama.service.impl;
 
 import com.yinhe.dama.aop.Encapsulation;
-import com.yinhe.dama.entity.DataAccount;
 import com.yinhe.dama.entity.DataRecord;
 import com.yinhe.dama.entity.DataUser;
-import com.yinhe.dama.mapper.DataAccountMapper;
 import com.yinhe.dama.mapper.DataRecordMapper;
 import com.yinhe.dama.mapper.DataUserMapper;
-import com.yinhe.dama.service.DataAccountService;
 import com.yinhe.dama.service.DataUserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +27,6 @@ public class DataUserServiceImpl implements DataUserService {
     @Resource
     DataUserMapper dataUserMapper;
     @Resource
-    DataAccountMapper dataAccountMapper;
-    @Resource
     DataRecordMapper dataRecordMapper;
     private static final String usmona = "用户管理";
     /**用户查询*/
@@ -43,6 +38,12 @@ public class DataUserServiceImpl implements DataUserService {
     public int selectCont(DataUser dataUser) {
         return dataUserMapper.selectCont(dataUser);
     }
+    /**查询所有用户*/
+    @Override
+    public List<DataUser> selectDausAl() {
+        return dataUserMapper.selectDausAl();
+    }
+
     /**用户添加*/
     @Override
     public int addDaus(DataUser dataUser, HttpServletRequest request) {
@@ -57,14 +58,11 @@ public class DataUserServiceImpl implements DataUserService {
     /**用户删除*/
     @Override
     public int deleteDaus(String ids,HttpServletRequest request) {
-        String[] strArray = ids.split(",");
-        int[] ints = new int[strArray.length];
-        for (int i = 0; i < strArray.length; i++) {
-            ints[i] = Integer.parseInt(strArray[i]);
-        }
+
+        int[] ints = Encapsulation.getIntArr(ids);
         int i = dataUserMapper.deleteDaus(ints);
         if(i > 0){
-            dataAccountMapper.updateUid(ints);
+         /*   dataAccountMapper.updateUid(ints);*/
             DataRecord dataRecord= Encapsulation.getRec(request,usmona,"删除");
             dataRecordMapper.addRecord(dataRecord);
         }
@@ -86,9 +84,20 @@ public class DataUserServiceImpl implements DataUserService {
     public DataUser selectUsid(Long uid) {
         return dataUserMapper.selectUsid(uid);
     }
-    /**查询所有*/
+   /* *导出*//*
     @Override
     public List<DataUser> expDaus(DataUser dataUser) {
         return dataUserMapper.expDaus(dataUser);
+    }*/
+    /**添加修改去重*/
+    @Override
+    public int selectQc(DataUser dataUser) {
+        return dataUserMapper.selectQc(dataUser);
+    }
+    /**查看公司是否存在*/
+    @Override
+    public List<DataUser> selectCoid(String coid) {
+        int [] ids = Encapsulation.getIntArr(coid);
+        return dataUserMapper.selectCoid(ids);
     }
 }

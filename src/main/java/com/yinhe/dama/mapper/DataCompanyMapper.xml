@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yinhe.dama.mapper.DataCompanyMapper">
+    <resultMap id="BaseResultMap" type="com.yinhe.dama.entity.DataCompany" >
+        <id column="coid" property="coid" jdbcType="BIGINT" />
+        <result column="coname" property="coname" jdbcType="BIGINT" />
+        <result column="conumber" property="conumber" jdbcType="VARCHAR" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+      coid, coname,conumber, remark
+    </sql>
+
+    <!--多条件分页查询-->
+    <select id="selectDaco" parameterType="DataCompany" resultMap="BaseResultMap" >
+        select <include refid="Base_Column_List" /> from data_company  where 1=1
+        <if test="coname != null" >
+            and coname LIKE  CONCAT(CONCAT('%', #{coname,jdbcType=VARCHAR} ), '%')
+        </if>
+        limit #{page,jdbcType=BIGINT} , #{pageSize,jdbcType=BIGINT}
+    </select>
+
+    <!--查询总数 -->
+    <select id="selectCont" parameterType="DataCompany" resultType="Integer" >
+        select count(*) from data_company  where 1=1
+        <if test="coname != null" >
+            and coname LIKE  CONCAT(CONCAT('%', #{coname,jdbcType=VARCHAR} ), '%')
+        </if>
+    </select>
+
+    <!--查询所以-->
+    <select id="selectcoAll"  resultMap="BaseResultMap" >
+        select <include refid="Base_Column_List" /> from data_company
+    </select>
+
+    <!--根据id查询-->
+    <select id="selectCoid"  resultType="DataCompany">
+        select <include refid="Base_Column_List" /> FROM data_company  where coid = #{coid}
+    </select>
+
+
+    <!-- 去重 -->
+    <select id="selectcoQc" parameterType="DataCompany" resultType="Integer" flushCache="true" useCache="false">
+        select count(*) FROM data_company  where coname = #{coname,jdbcType=VARCHAR}
+        <if test="coid != null" >
+            and coid !=  #{coid,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <!-- 账号添加 -->
+    <insert id="addDaco" parameterType="DataCompany">
+        INSERT INTO data_company (coname,conumber,remark)values
+       (#{coname,jdbcType=VARCHAR} , #{conumber,jdbcType=VARCHAR} ,#{remark,jdbcType=VARCHAR})
+    </insert>
+
+    <!-- 删除前查询用户信息是否绑定 -->
+   <select id="selectusid"  resultType="Integer" flushCache="true" useCache="false">
+        select count(*) FROM data_user  where company = #{coid,jdbcType=VARCHAR}
+   </select>
+
+    <!-- 账号删除-->
+    <delete id="deleteDaco" parameterType="int[]">
+        <!-- forEach : 用来循环 collection : 用来指定循环的数据的类型 可以填的值有：array,list,map item
+            : 循环中为每个循环的数据指定一个别名 index : 循环中循环的下标 open : 开始 close : 结束 separator : 数组中元素之间的分隔符 -->
+        delete from data_company where coid in
+        <foreach collection="array" item="arr" index="no" open="("
+                 separator="," close=")">
+            #{arr}
+        </foreach>
+    </delete>
+
+    <!--根据id修改信息  -->
+    <update id="updateDaco" parameterType="DataCompany">
+        update data_company
+        <set>
+            <if test="coname != null and coname != '' ">
+                coname = #{coname},
+            </if>
+            <if test="conumber != null and conumber != '' ">
+                conumber = #{conumber},
+            </if>
+            <if test="remark != null and remark != '' ">
+                remark = #{remark},
+            </if>
+        </set>
+        where coid = #{coid}
+    </update>
+
+</mapper>

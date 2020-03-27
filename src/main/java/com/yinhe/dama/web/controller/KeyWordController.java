@@ -103,6 +103,25 @@ public class KeyWordController {
                     Encapsulation.write(response, jsonObject);
                 }
                 break;
+            //公司
+            case "comp_add":
+                if(Encapsulation.getIs(keyword.getComp_add(),request)){
+                    JSONObject jsonObject = Encapsulation.getJsonObj(1);
+                    Encapsulation.write(response, jsonObject);
+                }else{
+                    JSONObject jsonObject = Encapsulation.getJsonObj(-1);
+                    Encapsulation.write(response, jsonObject);
+                }
+                break;
+            case "comp_upd":
+                if(Encapsulation.getIs(keyword.getComp_upd(),request)){
+                    JSONObject jsonObject = Encapsulation.getJsonObj(1);
+                    Encapsulation.write(response, jsonObject);
+                }else{
+                    JSONObject jsonObject = Encapsulation.getJsonObj(-1);
+                    Encapsulation.write(response, jsonObject);
+                }
+                break;
         }
      }
 }

@@ -1,6 +1,7 @@
 package com.yinhe.dama.web.base;
 
 import com.yinhe.dama.aop.Encapsulation;
+import com.yinhe.dama.aop.SessionAdus;
 import com.yinhe.dama.entity.DataAccount;
 import com.yinhe.dama.service.DataAccountService;
 import org.springframework.stereotype.Controller;
@@ -14,9 +15,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.websocket.Session;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @ClassName LoginJumpController
@@ -31,7 +32,7 @@ public class LoginJumpController {
 
     @Resource
     DataAccountService dataAccountService;
-    private static final String  [] now = {"02","03","04","05","021","022","031","041","042","051","052","053"};
+    private static final String  [] now = {"02","03","05","021","022","023","024","031","051","052","053","054"};
     /**
      * 点击登录
      * @param scode 账号
@@ -46,7 +47,7 @@ public class LoginJumpController {
         DataAccount dataAccount = new DataAccount();
         if(!StringUtils.isEmpty(scode) && !StringUtils.isEmpty(pass)){
             dataAccount.setAccount(scode);
-            dataAccount.setPassword(pass);
+            dataAccount.setPassword(Encapsulation.md5Encode(pass));
             dataAccount = dataAccountService.selectDataAccount(dataAccount);
             if(dataAccount != null){
                 if(dataAccount.getAuthority() != 0 && dataAccount.getU_id() == null){
@@ -57,7 +58,18 @@ public class LoginJumpController {
                     String aaa  = Encapsulation.getTime();
                     dataAccount.setLogon_time(aaa);
                     dataAccount.setIp(ip);
+                  /*  SessionAdus.ifno(scode,session);*/
                     session.setAttribute("acco",dataAccount);
+                    /* System.err.println("赛肾 ： "+session.getId());*/
+                   /* session.removeAttribute();
+                    Iterator iter = SessionAdus.getMap().entrySet().iterator();
+                    while (iter.hasNext()) {
+                    Map.Entry entry = (Map.Entry) iter.next();
+                    Object key = entry.getKey();
+                    Object value = entry.getValue();
+                        System.err.println("迈普 ： "+key + " -- " +value);
+                    }*/
+
                     dataAccountService.upAcc(dataAccount,request);
                     response.getWriter().print(1);
                 }
@@ -77,16 +89,23 @@ public class LoginJumpController {
     @RequestMapping("/authority")
     public String authority(HttpSession session, Model model) {
         DataAccount accountSession = (DataAccount) session.getAttribute("acco");
-
-        if(null != accountSession.getModuleo_authority() && !"".equals(accountSession.getModuleo_authority())){
-            String sb = accountSession.getModuleo_authority();
+        String sb= "";
+        if(accountSession.getModuleo_authority() != null  && ! "".equals(accountSession.getModuleo_authority())){
+            sb = accountSession.getModuleo_authority();
             if(null != accountSession.getModulet_authority() && !"".equals(accountSession.getModulet_authority())){
                 sb = sb + ","+accountSession.getModulet_authority();
             }
-            String [] out = sb.split(",");
-            StringBuffer jum = Encapsulation.getStr(now,out);
-            model.addAttribute("jum",jum);
         }
+        String [] out = sb.split(",");
+        StringBuffer jum = Encapsulation.getStr(now,out);
+        model.addAttribute("jum",jum);
         return "/start";
+    }
+
+    /**退出*/
+    @RequestMapping("/logoutF")
+    public String  logoutF(HttpSession session) {
+        session.invalidate();
+        return "/";
     }
 }

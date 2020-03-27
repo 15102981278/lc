@@ -5,9 +5,14 @@
         <id column="uid" property="uid" jdbcType="BIGINT" />
         <result column="name" property="name" jdbcType="VARCHAR" />
         <result column="phone" property="phone" jdbcType="VARCHAR" />
-        <result column="company" property="company" jdbcType="VARCHAR" />
+        <result column="company" property="company" jdbcType="BIGINT" />
         <result column="remark" property="remark" jdbcType="VARCHAR" />
         <result column="creattime" property="creattime" jdbcType="VARCHAR" />
+        <collection property="dataCompany" ofType="com.yinhe.dama.entity.DataCompany">
+            <result column="coid" property="coid" jdbcType="BIGINT" />
+            <result column="coname" property="coname" jdbcType="VARCHAR" />
+            <result column="conumber" property="conumber" jdbcType="VARCHAR" />
+        </collection>
     </resultMap>
 
     <sql id="Base_Column_List" >
@@ -16,32 +21,42 @@
 
 
     <!--用户多条件分页查询-->
-    <select id="selectDaus" parameterType="DataUser" resultMap="BaseResultMap" flushCache="true" useCache="false">
-        select <include refid="Base_Column_List" /> from data_user where 1=1
+    <select id="selectDaus" parameterType="DataUser" resultMap="BaseResultMap">
+        select * from data_user a left join data_company b on a.company = b.coid where 1=1
         <if test="name != null" >
-            and name LIKE  CONCAT(CONCAT('%', #{name,jdbcType=VARCHAR} ), '%')
+            and a.name LIKE  CONCAT(CONCAT('%', #{name,jdbcType=VARCHAR} ), '%')
         </if>
-        <if test="company != null" >
-            and company LIKE  CONCAT(CONCAT('%', #{company,jdbcType=VARCHAR} ),'%')
+        <if test="conam != null" >
+            and b.coname LIKE  CONCAT(CONCAT('%', #{conam,jdbcType=VARCHAR} ),'%')
+        </if>
+        <if test="phone != null" >
+            and a.phone LIKE  CONCAT(CONCAT('%', #{phone,jdbcType=VARCHAR} ),'%')
         </if>
         limit #{page,jdbcType=BIGINT} , #{pageSize,jdbcType=BIGINT}
     </select>
 
     <!--用户条件查询总数 -->
-    <select id="selectCont" parameterType="DataUser" resultType="Integer" flushCache="true" useCache="false">
-        select count(*) FROM data_user  where 1=1
+    <select id="selectCont" parameterType="DataUser" resultType="Integer">
+        select count(*) from data_user a left join data_company b on a.company = b.coid where 1=1
         <if test="name != null" >
-            and name LIKE  CONCAT(CONCAT('%', #{name,jdbcType=VARCHAR} ), '%')
+            and a.name LIKE  CONCAT(CONCAT('%', #{name,jdbcType=VARCHAR} ), '%')
         </if>
-        <if test="company != null" >
-            and company LIKE  CONCAT(CONCAT('%', #{company,jdbcType=VARCHAR} ),'%')
+        <if test="conam != null" >
+            and b.coname LIKE  CONCAT(CONCAT('%', #{conam,jdbcType=VARCHAR} ),'%')
+        </if>
+        <if test="phone != null" >
+            and a.phone LIKE  CONCAT(CONCAT('%', #{phone,jdbcType=VARCHAR} ),'%')
         </if>
     </select>
 
+    <!--查询所有用户-->
+    <select id="selectDausAl"  resultMap="BaseResultMap">
+        select * from data_user a left join data_company b on a.company = b.coid
+    </select>
     <!-- 用户添加 -->
     <insert id="addDaus" parameterType="DataUser">
         INSERT INTO data_user (name,phone,company,remark,creattime)values
-       (#{name,jdbcType=VARCHAR} , #{phone,jdbcType=VARCHAR} , #{company,jdbcType=VARCHAR} ,
+       (#{name,jdbcType=VARCHAR} , #{phone,jdbcType=VARCHAR} , #{company,jdbcType=BIGINT} ,
        #{remark,jdbcType=VARCHAR} , #{creattime,jdbcType=VARCHAR})
     </insert>
 
@@ -58,7 +73,7 @@
 
 
     <!--根据id查询用户信息-->
-    <select id="selectUsid"  resultType="DataUser" flushCache="true" useCache="false">
+    <select id="selectUsid"  resultType="DataUser">
         select <include refid="Base_Column_List" /> FROM data_user  where uid = #{uid}
     </select>
 
@@ -82,14 +97,33 @@
         where uid = #{uid}
     </update>
 
-    <!--导出 -->
-    <select id="expDaus" parameterType="DataUser" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List"/> from data_user  where 1=1
-        <if test="name != null" >
-            and name LIKE  CONCAT(CONCAT('%', #{name,jdbcType=VARCHAR} ), '%')
-        </if>
-        <if test="recaccount != null" >
-            and company LIKE  CONCAT(CONCAT('%', #{company,jdbcType=VARCHAR} ),'%')
+    <select id="selectQc" parameterType="DataUser" resultType="Integer" flushCache="true" useCache="false">
+        select count(*) FROM data_user  where phone = #{phone,jdbcType=VARCHAR}
+        <if test="uid != null" >
+            and uid !=  #{uid,jdbcType=VARCHAR}
         </if>
     </select>
+
+    <!--查询有没有公司主键 -->
+    <select id="selectCoid"  parameterType="int[]" resultMap="BaseResultMap">
+        select * from data_user b left join data_company a on a.coid = b.company where b.company in
+        <foreach collection="array" item="arr" index="no" open="("
+                 separator="," close=")">
+            #{arr}
+        </foreach>
+    </select>
+    <!--导出 -->
+<!--    <select id="expDaus" parameterType="DataUser" resultMap="BaseResultMap">
+        select * from data_user a left join data_company b on a.company = b.coid where 1=1
+        <if test="name != null" >
+            and a.name LIKE  CONCAT(CONCAT('%', #{name,jdbcType=VARCHAR} ), '%')
+        </if>
+        <if test="conam != null" >
+            and b.coname LIKE  CONCAT(CONCAT('%', #{conam,jdbcType=VARCHAR} ),'%')
+        </if>
+        <if test="phone != null" >
+            and a.phone LIKE  CONCAT(CONCAT('%', #{phone,jdbcType=VARCHAR} ),'%')
+        </if>
+    </select>-->
+
 </mapper>

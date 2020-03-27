@@ -42,6 +42,9 @@ public class powerthorityJump{
              case "record":
                 main = "/record/record";//日志管理
                 break;
+             case "company":
+                main = "/datacompany/company";//公司管理
+                break;
              case "balanceMe":
             	  main = "/lc/balancesel/balanceMe";//个人基本资料
                  break;

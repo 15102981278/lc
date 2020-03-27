@@ -10,7 +10,7 @@ import lombok.Getter;
  * @Version 1.0
  */
 @Getter
-public final class KeyWord {
+public  class KeyWord {
     //账号
     private  final String acco_sel = "0511";
     private  final String acco_upd = "0512";
@@ -27,5 +27,10 @@ public final class KeyWord {
     //日志
     private  final String reco_sel = "0531";
     private  final String reco_exp = "0532";
+    //公司
+    private  final String comp_sel = "0541";
+    private  final String comp_upd = "0542";
+    private  final String comp_add = "0543";
+    private  final String comp_del = "0544";
 
 }

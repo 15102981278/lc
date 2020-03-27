@@ -22,11 +22,14 @@ public class DataUser extends PageBean {
     private String name;
     /**用户电话*/
     private String phone;
-    /**用户公司*/
-    private String company;
+    /**公司主键*/
+    private Long company;
     /**备注（待用字段）*/
     private String remark;
     /**创建时间*/
     private String creattime;
-
+    /**公司*/
+    private DataCompany dataCompany;
+    /**公司名*/
+    private String conam;
 }

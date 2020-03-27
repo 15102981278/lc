@@ -18,7 +18,8 @@ public interface DataUserService {
     /**查询用户信息*/
     List<DataUser> selectDaus(DataUser dataUser);
     int selectCont(DataUser dataUser);
-
+    /**查询所有用户信息*/
+    List<DataUser> selectDausAl();
     /**添加*/
     int addDaus(DataUser dataUser, HttpServletRequest request);
     /**删除*/
@@ -28,5 +29,9 @@ public interface DataUserService {
     /**根据id查询用户信息*/
     DataUser selectUsid(Long uid);
     /**条件导出*/
-    List<DataUser> expDaus(DataUser dataUser);
+   /* List<DataUser> expDaus(DataUser dataUser);*/
+    /**添加修改去重*/
+    int selectQc(DataUser dataUser);
+    /**用户表是否已存在公司*/
+    List<DataUser> selectCoid(String coid);
 }

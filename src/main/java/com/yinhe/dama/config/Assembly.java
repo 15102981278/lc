@@ -1,6 +1,8 @@
 package com.yinhe.dama.config;
 
 import com.yinhe.dama.web.tool.LoginHandlerInterceptor;
+import com.yinhe.dama.web.tool.MySeeionListener;
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -39,8 +41,16 @@ public class Assembly {
                 registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**")
                         .excludePathPatterns("/LoginJumpController/login","/","/archive","/assets/**","/layuiadmin/**");
             }
+
         };
         return  webmc;
+    }
+
+    @Bean
+    public ServletListenerRegistrationBean<MySeeionListener> initServletListenerRegistrationBean(){
+        ServletListenerRegistrationBean<MySeeionListener> servletListenerRegistrationBean=new ServletListenerRegistrationBean<>();
+        servletListenerRegistrationBean.setListener(new MySeeionListener());
+        return servletListenerRegistrationBean;
     }
 
 }

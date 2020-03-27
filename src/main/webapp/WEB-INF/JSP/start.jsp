@@ -29,22 +29,6 @@
           </li>
         </ul>
         <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right" >
-
-         <li class="layui-nav-item"lay-unselect>
-          	<a id="city"></a>
-          </li>
-          <li class="layui-nav-item"lay-unselect>
-          	<a id="dat"></a>
-          </li>
-          <li class="layui-nav-item"lay-unselect>
-          	<a id="tianqi"></a>
-          </li>
-          <li class="layui-nav-item"lay-unselect>
-          	<a id="maximum"></a>
-          </li>
-          <li class="layui-nav-item" lay-unselect>
-            <a id="minimum"></a>
-          </li>
           <li class="layui-nav-item layui-hide-xs" lay-unselect>
             <a href="javascript:;" layadmin-event="theme">
               <i class="layui-icon layui-icon-theme"></i>
@@ -84,42 +68,34 @@
                 <dd data-name="console" class="layui-this" id="011">
                   <a lay-href="${pageContext.request.contextPath}/powerJump/powerJump?num=lunb">公司风采</a>
                 </dd>
-                <dd data-name="console"  id="012">
+                <%--<dd data-name="console"  id="012">
                   <a lay-href="${pageContext.request.contextPath}/powerJump/powerJump?num=xitongsm">系统说明</a>
-                </dd>
+                </dd>--%>
               </dl>
             </li>
 
             <li data-name="template" class="layui-nav-item" id="02">
               <a href="javascript:;" lay-direction="2">
                 <i class="layui-icon layui-icon-template"></i>
-                <cite>扫码管理</cite>
+                <cite>生产管理</cite>
               </a>
               <dl class="layui-nav-child">
                 <dd id="021"><a lay-href="${pageContext.request.contextPath}/PowerJump/authority?num=websocat">模块扫码</a></dd>
                 <dd id="022"><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump.do?num=tubiao">测试扫码</a></dd>
+                <dd id="023"><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump.do?num=perinformation">模块管理</a></dd>
+                <dd id="024"><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump.do?num=balance">表管理</a></dd>
               </dl>
             </li>
 
             <li data-name="app" class="layui-nav-item" id="03">
               <a href="javascript:;"  lay-direction="2">
                 <i class="layui-icon layui-icon-app"></i>
-                <cite>系统查询</cite>
+                <cite>档案管理</cite>
               </a>
               <dl class="layui-nav-child">
                 <dd id="031">
                   <a lay-href="${pageContext.request.contextPath}/powerJump/powerJump.do?num=equpay">计量信息</a>
                 </dd>
-              </dl>
-            </li>
-            <li data-name="user" class="layui-nav-item" id="04">
-              <a href="javascript:;"  lay-direction="2">
-                <i class="layui-icon layui-icon-user"></i>
-                <cite>设备管理</cite>
-              </a>
-              <dl class="layui-nav-child">
-                <dd id="041"><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump.do?num=perinformation">模块管理</a></dd>
-                <dd id="042"><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump.do?num=balance">表管理</a></dd>
               </dl>
             </li>
             <li data-name="set" class="layui-nav-item" id="05">
@@ -133,6 +109,7 @@
                     <dd id="051"><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump?num=account">账号管理</a></dd>
                     <dd id="052"><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump?num=operator">用户管理</a></dd>
                     <dd id="053"><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump?num=record">日志管理</a></dd>
+                    <dd id="054"><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump?num=company">公司管理</a></dd>
                   </dl>
                 </dd>
               </dl>
@@ -188,25 +165,8 @@
   </script>
   <script>
 
- /*window.onload = function(){
-   var sUserAgent = navigator.userAgent.toLowerCase();
-   var bIsIpad = sUserAgent.match(/ipad/i) == "ipad";
-   var bIsIphoneOs = sUserAgent.match(/iphone os/i) == "iphone os";
-   var bIsMidp = sUserAgent.match(/midp/i) == "midp";
-   var bIsUc7 = sUserAgent.match(/rv:1.2.3.4/i) == "rv:1.2.3.4";
-   var bIsUc = sUserAgent.match(/ucweb/i) == "ucweb";
-   var bIsAndroid = sUserAgent.match(/android/i) == "android";
-   var bIsCE = sUserAgent.match(/windows ce/i) == "windows ce";
-   var bIsWM = sUserAgent.match(/windows mobile/i) == "windows mobile";
-
-   if (!(bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM)) {
-     myfun();
-   }
-
- }*/
-
   function LogoutF(){
-       location.href = '${pageContext.request.contextPath}/';
+       location.href = '${pageContext.request.contextPath}/LoginJumpController/logoutF';
   }
 
  $(document).ready(function(){
@@ -219,7 +179,7 @@
 
  document.onkeydown = function(){
    var e = window.event || arguments[0];
-   if (e.keyCode == 123) {
+   if (e.keyCode == 123){
      return false;
    }
  }

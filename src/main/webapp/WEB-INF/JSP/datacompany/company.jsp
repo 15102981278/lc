@@ -3,7 +3,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>用户管理</title>
+  <title>公司管理</title>
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
@@ -16,21 +16,9 @@
       <div class="layui-form layui-card-header layuiadmin-card-header-auto">
         <div class="layui-form-item">
           <div class="layui-inline">
-            <label class="layui-form-label">姓名</label>
+            <label class="layui-form-label">公司名</label>
             <div class="layui-input-block">
-              <input type="text" name="name" id = "name" placeholder="请输入" autocomplete="off" class="layui-input">
-            </div>
-          </div>
-          <div class="layui-inline">
-            <label class="layui-form-label">公司</label>
-            <div class="layui-input-block">
-              <input type="text" name="company" id = "company" placeholder="请输入" autocomplete="off" class="layui-input">
-            </div>
-          </div>
-          <div class="layui-inline">
-            <label class="layui-form-label">电话</label>
-            <div class="layui-input-block">
-              <input type="text" name="phone" id = "phone" placeholder="请输入" autocomplete="off" class="layui-input">
+              <input type="text" name="coname" id = "coname" placeholder="请输入" autocomplete="off" class="layui-input">
             </div>
           </div>
           <div class="layui-inline">
@@ -46,11 +34,7 @@
              		<i class="layui-icon">&#xe654;</i></button>
              <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="update()"><i class="layui-icon">&#xe642;</i></button>
              <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="delet()"><i class="layui-icon">&#xe640;</i></button>
-             <%--<button class="layui-btn layui-btn-primary layui-btn-sm"  id="upload" >导入表格</button>--%>
-             <%--<button class="layui-btn layui-btn-primary layui-btn-sm" onclick="exportall()">导出表格</button>--%>
-             <%--<a href="${pageContext.request.contextPath}/Position/export.do" class="layui-btn layui-btn-primary layui-btn-sm">导出模板</a>--%>
         </div>
-        
         <table id="test-table-height" lay-filter="test-table-height"></table>
       </div>
     </div>
@@ -64,25 +48,19 @@
 	  var table = layui.table;
 	  table.render({
 	       elem: '#test-table-height'
-	      ,url: '${pageContext.request.contextPath}/DataUser/selectDaus'
+	      ,url: '${pageContext.request.contextPath}/DataCompany/selectDaco'
 	      ,height:675
 	      ,cellMinWidth: 80
 	      ,page: true
 	      ,limit: 20
 	      ,limits:[10,20,30,50,100]
-	      ,skin:'nob'
 	      ,even: true
 	      ,cols: [[
-             {field:'uid',title:'序号',width:170, sort: true, fixed: true,type:'numbers'}
+             {field:'coid',title:'序号',width:170, sort: true, fixed: true,type:'numbers'}
             ,{type:'checkbox'}
-	        ,{field:'name', title: '姓名',  align: 'center'}
-            ,{field:'phone', title: '电话',  align: 'center'}
-            ,{title: '所属公司',  align: 'center',
-              templet:function(obj){
-                return obj.dataCompany.coname;
-              }}
+	        ,{field:'coname', title: '公司',  align: 'center'}
+            ,{field:'conumber', title: '编码',  align: 'center'}
             ,{field:'remark', title: '备注',  align: 'center'}
-            ,{field:'creattime', title: '创建时间',  align: 'center'}
 	      ]]
 	  });
 	  
@@ -90,20 +68,16 @@
 	  var $ = layui.$, active = {
 		    reload: function(){
 		    //获取查询条件
-		      var name=document.getElementById("name").value;
-              var company=document.getElementById("company").value;
-              var phone=document.getElementById("phone").value;
+		      var coname=document.getElementById("coname").value;
 		      //执行重载
 		      table.reload('test-table-height', {
-		    	 url : '${pageContext.request.contextPath}/DataUser/selectDaus'
+		    	 url : '${pageContext.request.contextPath}/DataCompany/selectDaco'
 		        ,page: {
 		          curr: 1
 		        }
 		      //根据条件查询
 		        ,where: {
-                    name:name,
-                    conam:company,
-                    phone:phone
+                  coname:coname
 		        }
 		      });
 		   }
@@ -118,7 +92,7 @@
   
   function add(){
     $.ajax({
-      url:'${pageContext.request.contextPath}/keyword/passThrough?juau=user_add',
+      url:'${pageContext.request.contextPath}/keyword/passThrough?juau=comp_add',
       type:'post',
       success: function (data) {
         var result=eval('('+data+')');
@@ -128,10 +102,10 @@
           layer.open({
             //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             type:2,
-            title:"添加用户",
-            area: ['22%','45%'],
+            title:"添加公司",
+            area: ['22%','38%'],
             offset: '100px',
-            content:'${pageContext.request.contextPath}/StyleJump/UserJump?num=UserAdd',
+            content:'${pageContext.request.contextPath}/StyleJump/CompJump?num=compadd',
             btn: ['确定','取消'],
             yes: function(index,layero){
 
@@ -142,17 +116,15 @@
               //监听提交
               iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
                 var body = layer.getChildFrame('body', index);
-                var name = body.find('#name').val().replace(/\s/g,"");
-                var phone = body.find('#phone').val().replace(/\s/g,"");
-                var company = body.find('#company').val().replace(/\s/g,"");
+                var coname = body.find('#coname').val().replace(/\s/g,"");
+                var conumber = body.find('#conumber').val().replace(/\s/g,"");
                 var remark = body.find('#remark').val().replace(/\s/g,"");
                 $.ajax({
-                  url:'${pageContext.request.contextPath}/DataUser/addDaus',
+                  url:'${pageContext.request.contextPath}/DataCompany/addDaco',
                   type:'post',
                   data:{
-                    "name":name,
-                    "phone":phone,
-                    "company":company,
+                    "coname":coname,
+                    "conumber":conumber,
                     "remark":remark
                   },
                   success: function (data) {
@@ -169,7 +141,7 @@
                         ,time:800
                       })
                     }else if(result.code == 2){
-                      layer.msg('电话号码已存在,请重新输入');
+                      layer.msg('公司名称已存在,请重新输入');
                     }else{
                       layer.alert('添加失败', {
                         skin: 'layui-layer-molv'
@@ -190,7 +162,7 @@
   function update(){
 
     $.ajax({
-      url:'${pageContext.request.contextPath}/keyword/passThrough?juau=user_upd',
+      url:'${pageContext.request.contextPath}/keyword/passThrough?juau=comp_upd',
       type:'post',
       success: function (data) {
         var result = eval('(' + data + ')');
@@ -204,14 +176,14 @@
           if(data.length != 1){
             layer.msg('请选择一条数据');
           }else{
-            var uid = data[0].uid
+            var coid = data[0].coid
             layer.open({
               //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层 ）4（tips层）
               type:2,
               title:"修改楼层/商户",
-              area: ['22%','45%'],
+              area: ['22%','38%'],
               offset: '100px',
-              content:'${pageContext.request.contextPath}/StyleJump/UserJump?num=UserUpd&uid=' + uid,
+              content:'${pageContext.request.contextPath}/StyleJump/CompJump?num=compupd&coid=' + coid,
               btn: ['确定','取消'],
               yes: function(index,layero){
 
@@ -223,18 +195,16 @@
                 //监听提交
                 iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
                   var body = layer.getChildFrame('body', index);
-                  var name = body.find('#name').val().replace(/\s/g,"");
-                  var phone = body.find('#phone').val().replace(/\s/g,"");
-                  var company = body.find('#company').val().replace(/\s/g,"");
+                  var coname = body.find('#coname').val().replace(/\s/g,"");
+                  var conumber = body.find('#conumber').val().replace(/\s/g,"");
                   var remark = body.find('#remark').val().replace(/\s/g,"");
                   $.ajax({
-                    url:'${pageContext.request.contextPath}/DataUser/updateDaus',
+                    url:'${pageContext.request.contextPath}/DataCompany/updateDaco',
                     type:'post',
                     data:{
-                      "uid":uid,
-                      "name":name,
-                      "phone":phone,
-                      "company":company,
+                      "coid":coid,
+                      "coname":coname,
+                      "conumber":conumber,
                       "remark":remark
                     },
                     success: function (data) {
@@ -251,7 +221,7 @@
                           ,time:800
                         })
                       }else if(result.code == 2){
-                        layer.msg('电话号码已存在,请重新输入');
+                        layer.msg('公司名称已存在,请重新输入');
                       }else{
                         layer.alert('修改失败', {
                           skin: 'layui-layer-molv'
@@ -282,12 +252,12 @@
             var strids = "";
             for(var i = 0 ; i < data.length ; i++){
 
-              strids = strids + data[i].uid + ",";
+              strids = strids + data[i].coid + ",";
             }
-            layer.confirm('确定删除该用户吗？',{title:"警告！",skin:"layui-layer-molv"
+            layer.confirm('确定删除该公司吗？',{title:"警告！",skin:"layui-layer-molv"
               ,icon:0}, function(){
               $.ajax({
-                url:'${pageContext.request.contextPath}/DataUser/deletecount',
+                url:'${pageContext.request.contextPath}/DataCompany/deleteDaco',
                 type:'post',
                 data: {
                   ids:strids
@@ -308,9 +278,9 @@
                   }else if(result.code == -1){
                     layer.msg('您无此操作权限');
                   }else if(result.data.length > 0){
-                    var resp ='删除失败,请先删除以下用户对应的账号！'+'<br />';
+                    var resp ='删除失败,请先删除以下公司对应的用户信息！'+'<br />';
                     for(var i=0;i<result.data.length;i++){
-                      resp = resp +'账号:'+ result.data[i].account+' ～ 姓名:'+result.data[i].dataUser.name +'<br />'
+                      resp = resp +'姓名:'+ result.data[i].name+' ～ 公司:'+result.data[i].dataCompany.coname +'<br />'
                     }
                     layer.alert(resp, {
                       skin: 'layui-layer-molv'

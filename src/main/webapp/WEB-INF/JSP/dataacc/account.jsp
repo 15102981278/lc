@@ -40,6 +40,7 @@
       <div class="layui-card-body">
         <div class="layui-btn-group" style=" padding-bottom: 10px;">
              <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="add()"><i class="layui-icon">&#xe654;</i></button>
+             <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="update()"><i class="layui-icon">&#xe642;</i></button>
              <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="delet()"><i class="layui-icon">&#xe640;</i></button>
              <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="exportall()">导出表格</button>
         </div>
@@ -73,7 +74,7 @@
               templet:function(obj){
                 return obj.dataUser.name;
              }}
-	        ,{field:'authority', title: '权限',  align: 'center',
+	        ,{field:'authority', title: '身份',  align: 'center',
 	        	templet:function(obj){
 	        		if(obj.authority == 0){
 	        			return"超管";
@@ -90,18 +91,18 @@
 	        ,{title: '权限操作', align: 'center',unresize: true,
 	        	templet:function(d){
 	        		 var stat = "";
-	        		 stat="<button class='layui-btn layui-btn-sm layui-btn-normal'onclick='edit("+ d.accid +")'>编辑</button>";
+                  stat="<button class='layui-btn layui-btn-sm 'onclick='edit("+ d.accid +")'>编辑</button>";
 	        		 if(d.authority == 0){
-	        			 stat="<button class='layui-btn layui-btn-sm layui-btn-normal' >不可操作</button>";
+                       stat="<button class='layui-btn layui-btn-sm layui-btn-disabled'>禁用</button>";
 	        		 }
 	        		 return stat;
 	        	}}
             ,{title: '重置密码', align: 'center',unresize: true,
               templet:function(d){
                 var stat = "";
-                stat="<button class='layui-btn layui-btn-sm layui-btn-normal'onclick='Reset("+ d.accid +")'>重置</button>";
+                stat="<button class='layui-btn layui-btn-sm layui-btn-danger'onclick='Reset("+ d.accid +")'>重置</button>";
                 if(d.authority == 0){
-                  stat="<button class='layui-btn layui-btn-sm layui-btn-normal' >不可操作</button>";
+                  stat="<button class='layui-btn  layui-btn-sm layui-btn-disabled'>禁用</button>";
                 }
                 return stat;
               }}
@@ -113,17 +114,17 @@
 		    reload: function(){
 		    //获取查询条件
 		      var account=document.getElementById("account").value;
-		      var name=document.getElementById("name").value;
+		      var u_name=document.getElementById("name").value;
 		      //执行重载
 		      table.reload('test-table-height', {
-		    	 url : '${pageContext.request.contextPath}/Account/selectaAcc.do'   
+		    	 url : '${pageContext.request.contextPath}/DataAccount/selectDaac'
 		        ,page: {
 		          curr: 1
                  }
 		         //根据条件查询
 		        ,where: {
 		        	account:account,
-                    name:name
+                      u_name:u_name
 		         }
 		      });
 		   }
@@ -149,88 +150,362 @@
           //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
           type:2,
           title:"账号添加",
-          area: ['22%','60%'],
+          area: ['26%','50%'],
           offset: '100px',
-        content:'${pageContext.request.contextPath}/StyleJump/AccJump?num=AccAdd',
+          content:'${pageContext.request.contextPath}/StyleJump/AccJump?num=AccAdd',
           btn: ['确定','取消'], 
           yes: function(index,layero){
 
+            var iframeWindow = window['layui-layer-iframe'+ index]
+                    ,submitID = 'LAY-user-front-submit'
+                    ,submit = layero.find('iframe').contents().find('#'+ submitID);
+
+              //监听提交
+              iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+              var body = layer.getChildFrame('body', index);
+              var authority = body.find('#authority').val().replace(/\s/g,"");
+              var account = body.find('#account').val().replace(/\s/g,"");
+              var u_id = body.find('#u_id').val().replace(/\s/g,"");
+              var remark = body.find('#remark').val().replace(/\s/g,"");
+
+                $.ajax({
+                  url:'${pageContext.request.contextPath}/DataAccount/selectAcuid',
+                  type:'post',
+                  data:{
+                    "account":account
+                  },
+                  success: function (data) {
+                    var result = eval('(' + data + ')');
+                    if(result.code > 0){
+                      layer.msg('该账号已存在,请重新输入');
+                    }else{
+                      $.ajax({
+                        url:'${pageContext.request.contextPath}/DataAccount/selectAcuid',
+                        type:'post',
+                        data:{
+                          "u_id":u_id
+                        },
+                        success: function (data) {
+                          var result=eval('('+data+')');
+                          layer.confirm('该用户已有 '+result.code+' 个账号,确定添加吗？',{title:"提示！",skin:"layui-layer-molv"
+                            ,icon:0}, function(index){
+                            $.ajax({
+                              url:'${pageContext.request.contextPath}/DataAccount/addAcco',
+                              type:'post',
+                              data:{
+                                "authority":authority,
+                                "account":account,
+                                "u_id":u_id,
+                                "remark":remark
+                              },
+                              success: function (data) {
+                                var result=eval('('+data+')');
+                                if(result.code == 1){
+                                  layer.closeAll('iframe');
+                                  layer.alert('添加成功', {
+                                    skin: 'layui-layer-molv'
+                                    ,closeBtn: 0
+                                    ,icon:1
+                                    ,end:function(){
+                                      location.reload();
+                                    }
+                                    ,time:800
+                                  })
+                                }else{
+                                  layer.alert('添加失败', {
+                                    skin: 'layui-layer-molv'
+                                    ,closeBtn: 0
+                                  })
+                                }
+                              }
+                            });
+                          })
+                        }
+                      });
+                    }
+                  }
+                })
+
+            })
+            submit.trigger('click');
           }
           	})
         }
       }
       })
   }
-  
+
   function delet(){
-	  
-	  var table = layui.table
-	  var checkStatus = table.checkStatus('test-table-height'),
-	  data = checkStatus.data;
-	  //判断选中几条数据
-	  if(data.length < 1){
-		  layer.msg('请至少选择一个账号');
-	  }else{
-		  var isno = 0;
-	      var strids = "";
-	      for(var i = 0 ; i < data.length ; i++){
-	    	  strids = strids + data[i].accid + ",";
-	    	  if(data[i].cancellationsta == 0){
-	    		  isno = 1;
-	    		  break;
-	    	  }
-	       }
-		  if(isno > 0){
-			  layer.msg('只能删除已注销的账号！');
-		  }else{
-           	 $.ajax({
-    	     	 url:'${pageContext.request.contextPath}/Account/deletecount.do',
-    	      	type:'post',
-    	      	data: {
-    	    	  ids:strids
-    	         },
-    	     	 success: function (data){
-             		var result=eval('('+data+')');
-					if(result.code == 1){
-    	        		layer.alert('删除成功', {
-	         				 skin: 'layui-layer-molv'
-	          				 ,closeBtn: 0
-	          				 ,icon:1
-	          				 ,end:function(){
-	        	 				 location.reload();
-	        	 			  }
-    	        	 	  	 ,time:800
-   						})
-    	        	}else{
-    	        		layer.alert('删除失败', {
-	          				skin: 'layui-layer-molv'
-	          				,closeBtn: 0
-   						})
-    	        	}
-    	      	}
-    	  	});
-	  	}
- 	 }
+
+    var table = layui.table
+    var checkStatus = table.checkStatus('test-table-height'),
+            data = checkStatus.data;
+    //判断选中几条数据
+    if(data.length < 1){
+      layer.msg('请至少选择一条数据');
+    }else{
+      var strids = "";
+      var adm = 0;
+      for(var i = 0 ; i < data.length ; i++){
+        if (data[i].authority == 0){
+          adm = 1;
+        }
+        strids = strids + data[i].accid + ",";
+      }
+      if(adm == 1){
+        layer.msg('您无权删除超级管理员！');
+      }else{
+        layer.confirm('确定删除账号吗？',{title:"警告！",skin:"layui-layer-molv"
+          ,icon:0}, function(){
+          $.ajax({
+            url:'${pageContext.request.contextPath}/DataAccount/deleteacc',
+            type:'post',
+            data: {
+              ids:strids
+            },
+            success: function (data) {
+              var result=eval('('+data+')');
+              if(result.code == 1){
+                layer.alert('删除成功', {
+                  skin: 'layui-layer-molv'
+                  ,closeBtn: 0
+                  ,icon:1
+                  ,end:function(){
+                    location.reload();
+                  }
+                  ,time:800
+                })
+              }else if(result.code == -1){
+                layer.msg('您无此操作权限');
+              }else{
+                layer.alert('删除失败', {
+                  skin: 'layui-layer-molv'
+                  ,closeBtn: 0
+                })
+              }
+            }
+          });
+        })
+      }
+
+    }
   }
+
+  function update(){
+
+    $.ajax({
+      url:'${pageContext.request.contextPath}/keyword/passThrough?juau=acco_upd',
+      type:'post',
+      success: function (data) {
+        var result = eval('(' + data + ')');
+        if (result.code == -1) {
+          layer.msg('您无此操作权限');
+        } else {
+          var table = layui.table
+          var checkStatus = table.checkStatus('test-table-height'),
+                  data = checkStatus.data;
+          if(data.length != 1){
+            layer.msg('请选择一条数据');
+          }else{
+            if (data[0].authority == 0){
+              layer.msg('您无权修改超级管理员！');
+            }else{
+              var accid = data[0].accid
+              layer.open({
+                //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层 ）4（tips层）
+                type:2,
+                title:"修改楼层/商户",
+                area: ['26%','45%'],
+                offset: '100px',
+                content:'${pageContext.request.contextPath}/StyleJump/AccJump?num=AccUpd&accid=' + accid,
+                btn: ['确定','取消'],
+                yes: function(index,layero){
+
+                  var iframeWindow = window['layui-layer-iframe'+ index]
+                          ,submitID = 'LAY-posupdate-submit'
+                          ,submit = layero.find('iframe').contents().find('#'+ submitID);
+
+                  //监听提交
+                  iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                    var body = layer.getChildFrame('body', index);
+                    var authority = body.find('#authority').val().replace(/\s/g,"");
+                    var account = body.find('#account').val().replace(/\s/g,"");
+                    var u_id = body.find('#u_id').val().replace(/\s/g,"");
+                    var remark = body.find('#remark').val().replace(/\s/g,"");
+
+                          $.ajax({
+                            url:'${pageContext.request.contextPath}/DataAccount/updateAcco',
+                            type:'post',
+                            data:{
+                              "accid":accid,
+                              "authority":authority,
+                              "account":account,
+                              "u_id":u_id,
+                              "remark":remark
+                            },
+                            success: function (data) {
+                              var result=eval('('+data+')');
+                              if(result.code == 1){
+                                layer.closeAll('iframe');
+                                layer.alert('修改成功', {
+                                  skin: 'layui-layer-molv'
+                                  ,closeBtn: 0
+                                  ,icon:1
+                                  ,end:function(){
+                                    location.reload();
+                                  }
+                                  ,time:800
+                                })
+                              }else if(result.code == 2){
+                                layer.msg('账号已存在,请重新输入');
+                              }else{
+                                layer.alert('修改失败', {
+                                  skin: 'layui-layer-molv'
+                                  ,closeBtn: 0
+                                })
+                              }
+                            }
+                          });
+
+                  })
+                  submit.trigger('click');
+                }
+              })
+            }
+          }
+        }
+      }
+    })
+  }
+
 
   function exportall(){
-	  var pon = document.getElementById("account").value;
-	  var ptw = document.getElementById("name").value;
-	  var pth = document.getElementById("cancellationsta").value;
-	  var pfo = document.getElementById("remark1").value;
-	  window.location.href="${pageContext.request.contextPath}/Account/exportall.do?account="+pon+"&name="+ptw+"&cancellationsta="+pth+"&remark1="+pfo;
-  }
-    function edit(d){
-      layer.open({
-        //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-        type:2,
-        title:"编辑权限",
-        area: ['40%','60%'],
-        offset: '100px',
-        content:'${pageContext.request.contextPath}/StyleJump/AccJump?num=AccEdit&accid=' + d,
-        btn: ['确定','取消'],
-        yes: function(index,layero){
+    var account = document.getElementById("account").value;
+    var name = document.getElementById("name").value;
 
+    $.ajax({
+      url:'${pageContext.request.contextPath}/keyword/passThrough?juau=acco_exp',
+      type:'post',
+      success: function (data) {
+        var result = eval('(' + data + ')');
+        if (result.code == -1) {
+          layer.msg('您无此操作权限');
+        }else{
+          window.location.href="${pageContext.request.contextPath}/DataAccount/exportaco?account="+account+"&u_name="+name;
+        }
+      }
+    })
+  }
+
+
+  function Reset(d){
+
+    $.ajax({
+      url:'${pageContext.request.contextPath}/keyword/passThrough?juau=acco_res',
+      type:'post',
+      success: function (data) {
+        var result = eval('(' + data + ')');
+        if (result.code == -1) {
+          layer.msg('您无此操作权限');
+        }else{
+              layer.confirm('确定重置密码吗？',{title:"警告！",skin:"layui-layer-molv"
+                ,icon:0}, function(){
+                  $.ajax({
+                    url:'${pageContext.request.contextPath}/DataAccount/updatePas',
+                    type:'post',
+                    data:{
+                      accid:d
+                    },
+                    success: function (data) {
+                      var result = eval('(' + data + ')');
+                      if(result.code == 1){
+                        layer.alert('重置成功', {
+                          skin: 'layui-layer-molv'
+                          ,closeBtn: 0
+                          ,icon:1
+                          ,time:800
+                        })
+                      }else{
+                        layer.alert('重置失败', {
+                          skin: 'layui-layer-molv'
+                          ,closeBtn: 0
+                        })
+                      }
+                    }
+                  })
+              })
+        }
+      }
+    })
+  }
+
+    function edit(d){
+
+      $.ajax({
+        url:'${pageContext.request.contextPath}/keyword/passThrough?juau=acco_edi',
+        type:'post',
+        success: function (data){
+          var result = eval('(' + data + ')');
+          if (result.code == -1){
+            layer.msg('您无此操作权限');
+          }else{
+            layer.open({
+              //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+              type:2,
+              title:"编辑权限",
+              area: ['40%','60%'],
+              offset: '100px',
+              content:'${pageContext.request.contextPath}/StyleJump/AccJump?num=AccEdit&accid=' + d,
+              btn: ['确定','取消'],
+              yes: function(index,layero){
+                var iframeWindow = window['layui-layer-iframe'+ index]
+                        ,submitID = 'LAY-user-front-submit'
+                        ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                var body = layer.getChildFrame('body', index);
+                var fs = body.find('#fs').val().replace(/\s/g,"");
+                var is = body.find('#is').val().replace(/\s/g,"");
+                if(is == '0'){
+                  alert('is : '+is)
+                  $.ajax({
+                    url:'${pageContext.request.contextPath}/DataAccount/editAuth',
+                    type:'post',
+                    data:{
+                      "accid":d,
+                      "ids":fs
+                    },
+                    success: function (data) {
+                      var result=eval('('+data+')');
+                      if(result.code == 1){
+                        layer.closeAll('iframe');
+                        layer.alert('编辑成功', {
+                          skin: 'layui-layer-molv'
+                          ,closeBtn: 0
+                          ,icon:1
+                          ,end:function(){
+                            location.reload();
+                          }
+                          ,time:800
+                        })
+                      }else{
+                        layer.alert('编辑失败', {
+                          skin: 'layui-layer-molv'
+                          ,closeBtn: 0
+                        })
+                      }
+                    }
+                  });
+                }else{
+                  layer.closeAll('iframe');
+                  layer.alert('编辑成功', {
+                    skin: 'layui-layer-molv'
+                    ,closeBtn: 0
+                    ,icon:1
+                    ,time:800
+                  })
+                }
+              }
+            })
+          }
         }
       })
     }

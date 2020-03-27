@@ -50,7 +50,15 @@
                 });
             }
         </script>
-        
+
+        <script>
+            function keyLogin(){
+                if (event.keyCode==13)
+                var btn_login=document.getElementById("tijiao");
+                btn_login.focus();
+                btn_login.click()
+            }
+        </script>
     </head>
     <body>
         <!-- Top content -->
@@ -81,9 +89,9 @@
 			                        </div>
 			                        <div class="form-group">
 			                        	<label class="sr-only" for="form-password"></label>
-			                        	<input type="password" name="form-password" placeholder="密码" class="form-password form-control" id="form-password">
+			                        	<input type="password" name="form-password" placeholder="密码" class="form-password form-control" id="form-password" onkeydown="keyLogin()">
 			                        </div>
-			                        <button type="button"  onclick="submitt()" class="btn">登录</button>
+			                        <button id="tijiao" type="button"  onclick="submitt()" class="btn">登录</button>
 			                    </form>
 		                    </div>
                         </div>
