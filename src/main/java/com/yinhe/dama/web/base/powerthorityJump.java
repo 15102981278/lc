@@ -46,11 +46,17 @@ public class powerthorityJump{
                 main = "/datacompany/company";//公司管理
                 break;
              case "balanceMe":
-            	  main = "/lc/balancesel/balanceMe";//个人基本资料
-                 break;
+                main = "/perinf/meinf";//个人基本资料
+                break;
              case "updatePass":
-                main = "/lc/perInformation/updatePass";//修改密码
-                 break;
+                main = "/perinf/updpass";//修改密码
+                break;
+             case "moduscann":
+                main = "/scanning/moduscann";//模块扫码
+                break;
+             case "module":
+                main = "/module/module";//模块管理
+                break;
 
 
         }

@@ -41,11 +41,11 @@
           </li>
           <li class="layui-nav-item" lay-unselect>
             <a href="javascript:;">
-              <cite>用户</cite>
+              <cite>设置</cite>
             </a>
             <dl class="layui-nav-child">
-              <dd><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump.do?num=balanceMe">基本资料</a></dd>
-              <dd><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump.do?num=updatePass">修改密码</a></dd>
+              <dd><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump?num=balanceMe">基本资料</a></dd>
+              <dd><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump?num=updatePass">修改密码</a></dd>
               <dd  style="text-align: center;"   onclick="LogoutF()"><a>退出</a></dd>
             </dl>
           </li>
@@ -80,10 +80,10 @@
                 <cite>生产管理</cite>
               </a>
               <dl class="layui-nav-child">
-                <dd id="021"><a lay-href="${pageContext.request.contextPath}/PowerJump/authority?num=websocat">模块扫码</a></dd>
-                <dd id="022"><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump.do?num=tubiao">测试扫码</a></dd>
-                <dd id="023"><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump.do?num=perinformation">模块管理</a></dd>
-                <dd id="024"><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump.do?num=balance">表管理</a></dd>
+                <dd id="021"><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump?num=moduscann">模块扫码</a></dd>
+                <dd id="022"><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump?num=tubiao">测试扫码</a></dd>
+                <dd id="023"><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump?num=module">模块管理</a></dd>
+                <dd id="024"><a lay-href="${pageContext.request.contextPath}/powerJump/powerJump?num=balance">表管理</a></dd>
               </dl>
             </li>
 

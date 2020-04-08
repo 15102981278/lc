@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -223,6 +224,28 @@ public class DataAccountController {
         }else{
             JSONObject jsonObject = Encapsulation.getJsonObj(-1);
             Encapsulation.write(response, jsonObject);
+        }
+    }
+
+    /**修改密码*/
+    @RequestMapping("/updamypass")
+    public synchronized void  logoutF(HttpServletRequest request,HttpServletResponse response,String oldpass,String newpass) throws Exception {
+        DataAccount dataAccount = (DataAccount) request.getSession().getAttribute("acco");
+        if(!dataAccount.getPassword().equals(Encapsulation.md5Encode(oldpass))){
+            JSONObject jsonObject = Encapsulation.getJsonObj(-1);
+            Encapsulation.write(response, jsonObject);
+        }else{
+            DataAccount da = new DataAccount();
+            da.setPassword(Encapsulation.md5Encode(newpass));
+            da.setAccid(dataAccount.getAccid());
+            int Is =  dataAccountService.updamypass(da,request);
+            if(Is > 0){
+                JSONObject jsonObject = Encapsulation.getJsonObj(1);
+                Encapsulation.write(response, jsonObject);
+            }else {
+                JSONObject jsonObject = Encapsulation.getJsonObj(0);
+                Encapsulation.write(response, jsonObject);
+            }
         }
     }
 }

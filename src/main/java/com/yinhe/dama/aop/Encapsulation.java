@@ -74,7 +74,7 @@ public class Encapsulation {
 
 
     /**
-     * 数据响应
+     * 数据响应 集合
      * @param t
      * @param a
      * @return
@@ -88,6 +88,7 @@ public class Encapsulation {
         jsonObject.put("data", jsonArray);
         return jsonObject;
     }
+
 
     public static void write(HttpServletResponse response, Object o)throws Exception{
         response.setContentType("text/html;charset=utf-8");

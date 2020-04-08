@@ -45,4 +45,6 @@ public interface DataAccountService {
      int updatePas(DataAccount dataAccount,HttpServletRequest request);
      /**编辑权限*/
      int editAuth(String ids,Long accid,HttpServletRequest request);
+     /**修改密码*/
+     int updamypass(DataAccount dataAccount,HttpServletRequest request);
 }

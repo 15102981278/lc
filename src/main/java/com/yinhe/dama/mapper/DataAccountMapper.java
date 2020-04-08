@@ -42,4 +42,7 @@ public interface DataAccountMapper {
     int updatePas(DataAccount dataAccount);
     /**编辑权限*/
     int editAuth(DataAccount dataAccount);
+    /**修改密码*/
+    int updamypass(DataAccount dataAccount);
+
 }

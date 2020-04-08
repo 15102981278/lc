@@ -32,5 +32,11 @@ public  class KeyWord {
     private  final String comp_upd = "0542";
     private  final String comp_add = "0543";
     private  final String comp_del = "0544";
-
+    //模块
+    private  final String modu_sel = "0231";
+    private  final String modu_upd = "0232";
+    private  final String modu_add = "0233";
+    private  final String modu_del = "0234";
+    private  final String modu_exp = "0235";
+    private  final String modu_imp = "0236";
 }

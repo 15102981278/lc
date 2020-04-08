@@ -7,12 +7,14 @@
         <result column="recaccount" property="recaccount" jdbcType="VARCHAR" />
         <result column="recmodule" property="recmodule" jdbcType="VARCHAR" />
         <result column="recoperation" property="recoperation" jdbcType="VARCHAR" />
+        <result column="recdata" property="recdata" jdbcType="VARCHAR" />
+        <result column="reclass" property="reclass" jdbcType="VARCHAR" />
         <result column="recip" property="recip" jdbcType="VARCHAR" />
         <result column="rectime" property="rectime" jdbcType="VARCHAR" />
     </resultMap>
 
     <sql id="Base_Column_List" >
-    recid, recname, recaccount, recmodule,recoperation,recip,rectime
+    recid, recname, recaccount, recmodule,recoperation,recdata,reclass,recip,rectime
     </sql>
 
     <insert id="addRecord" parameterType="DataRecord">

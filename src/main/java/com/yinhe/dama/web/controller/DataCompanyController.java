@@ -163,4 +163,12 @@ public class DataCompanyController {
         }
     }
 
+
+    /**查询所有*/
+    @RequestMapping("/selectall")
+    public void selectall( HttpServletResponse response, HttpServletRequest request) throws Exception{
+            List<DataCompany> cslist = dataCompanyService.selectcoAll();
+            JSONObject jsonObject = Encapsulation.getJsonObject(cslist,0);
+            Encapsulation.write(response, jsonObject);
+    }
 }

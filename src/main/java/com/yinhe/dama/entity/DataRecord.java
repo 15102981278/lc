@@ -24,6 +24,10 @@ public class DataRecord extends PageBean {
     private String recmodule;
     /**发起动作*/
     private String recoperation;
+    /**操作数据*/
+    private String recdata;
+    /**操作类*/
+    private String reclass;
     /**ip*/
     private String recip;
     /**操作时间*/

@@ -250,5 +250,15 @@ public class DataAccountServiceImpl implements DataAccountService {
         }
         return i;
     }
+    /**修改密码*/
+    @Override
+    public int updamypass(DataAccount dataAccount, HttpServletRequest request) {
+       int i = accountMapper.updamypass(dataAccount);
+       if(i > 0){
+           DataRecord dataRecord= Encapsulation.getRec(request,"设置","修改密码");
+           dataRecordMapper.addRecord(dataRecord);
+       }
+        return i;
+    }
 
 }

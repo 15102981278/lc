@@ -166,4 +166,9 @@
         moduleo_authority = #{moduleo_authority},modulet_authority = #{modulet_authority},operate_authority = #{operate_authority}
         where accid = #{accid}
     </update>
+
+    <!--重置密码-->
+    <update id="updamypass" parameterType="DataAccount">
+        update data_account set password = #{password} where accid = #{accid}
+    </update>
 </mapper>

@@ -4,20 +4,67 @@
     <resultMap id="BaseResultMap" type="com.yinhe.dama.entity.DataModule" >
         <id column="modid" property="modid" jdbcType="BIGINT" />
         <result column="module_number" property="module_number" jdbcType="VARCHAR" />
+        <result column="module_psk" property="module_psk" jdbcType="VARCHAR" />
         <result column="module_sim" property="module_sim" jdbcType="VARCHAR" />
         <result column="platform_id" property="platform_id" jdbcType="VARCHAR" />
         <result column="register_time" property="register_time" jdbcType="VARCHAR" />
         <result column="last_time" property="last_time" jdbcType="VARCHAR" />
         <result column="test_state" property="test_state" jdbcType="INTEGER" />
-        <result column="module_customer" property="module_customer" jdbcType="VARCHAR" />
+        <result column="comid" property="comid" jdbcType="BIGINT" />
         <result column="username" property="username" jdbcType="VARCHAR" />
         <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <collection property="dataCompany" ofType="com.yinhe.dama.entity.DataCompany">
+            <result column="coid" property="coid" jdbcType="BIGINT" />
+            <result column="coname" property="coname" jdbcType="VARCHAR" />
+        </collection>
     </resultMap>
 
     <sql id="Base_Column_List" >
-    modid, module_number, module_sim, platform_id, register_time,last_time,test_state,module_customer,username,remark
+    modid, module_number,module_psk, module_sim, platform_id, register_time,last_time,test_state,comid,username,remark
     </sql>
 
+    <!--多条件分页查询-->
+    <select id="selectDamo" parameterType="DataModule" resultMap="BaseResultMap">
+        select * from data_module a left join data_company b on a.comid = b.coid where 1=1
+        <if test="module_number != null" >
+            and a.module_number LIKE  CONCAT(CONCAT('%', #{module_number,jdbcType=VARCHAR} ), '%')
+        </if>
+        <if test="platform_id != null" >
+            and a.platform_id LIKE  CONCAT(CONCAT('%', #{platform_id,jdbcType=VARCHAR} ),'%')
+        </if>
+        <if test="conam != null" >
+            and b.coname LIKE  CONCAT(CONCAT('%', #{conam,jdbcType=VARCHAR} ),'%')
+        </if>
+        <if test="last_time != null">
+            and a.last_time &gt;= #{last_time}
+        </if>
+        <if test="endtime != null">
+            and a.last_time &lt;= #{endtime}
+        </if>
+        limit #{page,jdbcType=BIGINT} , #{pageSize,jdbcType=BIGINT}
+    </select>
 
+    <!--条件查询总数 -->
+    <select id="selectCont" parameterType="DataModule" resultType="Integer">
+        select count(*) from data_module a left join data_company b on a.comid = b.coid where 1=1
+        <if test="module_number != null" >
+            and a.module_number LIKE  CONCAT(CONCAT('%', #{module_number,jdbcType=VARCHAR} ), '%')
+        </if>
+        <if test="platform_id != null" >
+            and a.platform_id LIKE  CONCAT(CONCAT('%', #{platform_id,jdbcType=VARCHAR} ),'%')
+        </if>
+        <if test="conam != null" >
+            and b.coname LIKE  CONCAT(CONCAT('%', #{conam,jdbcType=VARCHAR} ),'%')
+        </if>
+    </select>
 
+    <!--扫码添加 -->
+    <insert id="scaddModule" parameterType="DataModule">
+           insert into data_module (module_number,module_psk,platform_id,register_time,test_state,comid,username)
+           values(#{module_number,jdbcType=VARCHAR}, #{module_psk,jdbcType=VARCHAR},#{platform_id,jdbcType=VARCHAR}, #{register_time,jdbcType=VARCHAR}
+           ,0, #{comid,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR})
+           ON DUPLICATE KEY UPDATE
+           module_psk = #{module_psk},platform_id=#{platform_id},register_time= #{register_time},
+           comid=#{comid,jdbcType=BIGINT},username=#{username}
+    </insert>
 </mapper>
